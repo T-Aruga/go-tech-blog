@@ -33,6 +33,28 @@ func ArticleListByCursor(cursor int) ([]*model.Article, error) {
 	return articles, nil
 }
 
+// ArticleGetByID ...
+func ArticleGetByID(id int) (*model.Article, error) {
+	// クエリ文字列を生成します。
+	query := `SELECT *
+	FROM articles
+	WHERE id = ?;`
+
+	// クエリ結果を格納する変数を宣言します。
+	// 複数件取得の場合はスライスでしたが、一件取得の場合は構造体になります。
+	var article model.Article
+
+	// 結果を格納する構造体、クエリ文字列、パラメータを指定して SQL を実行します。
+	// 複数件の取得の場合は db.Select() でしたが、一件取得の場合は db.Get() になります。
+	if err := db.Get(&article, query, id); err != nil {
+		// エラーが発生した場合はエラーを返却します。
+		return nil, err
+	}
+
+	// エラーがない場合は記事データを返却します。
+	return &article, nil
+}
+
 // ArticleCreate ...
 func ArticleCreate(article *model.Article) (sql.Result, error) {
 	// 現在日時を取得します
